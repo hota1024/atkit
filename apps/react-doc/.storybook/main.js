@@ -17,7 +17,7 @@ module.exports = {
             find: "@acme/core",
             replacement: path.resolve(
               __dirname,
-              "../../../packages/acme-core/"
+              "../../../packages/react/"
             ),
           },
         ],
