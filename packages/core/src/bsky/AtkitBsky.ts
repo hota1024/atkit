@@ -1,5 +1,7 @@
 import {
+  AppBskyActorGetProfile,
   AppBskyFeedGetPosts,
+  AppBskyFeedGetTimeline,
   AtpAgentLoginOpts,
   AtpAgentOpts,
   AtpSessionData,
@@ -7,19 +9,22 @@ import {
 } from '@atproto/api'
 import { AuthState } from '../types'
 import { EventController } from '../EventController'
-import { OnAuthStateChanged, OnPostsChanged } from './events'
+import { OnAuthStateChanged, OnPostsChanged, OnProfilesChanged } from './events'
 import {
   FeedViewPost,
   PostView,
 } from '@atproto/api/dist/client/types/app/bsky/feed/defs'
+import { ProfileViewDetailed } from '@atproto/api/dist/client/types/app/bsky/actor/defs'
 
 export class AtkitBsky {
   #authState: AuthState = 'logged-out'
 
   #eventAuthStateChanged = new EventController<OnAuthStateChanged>()
   #eventPostsChanged = new EventController<OnPostsChanged>()
+  #eventProfilesChanged = new EventController<OnProfilesChanged>()
 
   #storedPostViews = new Map<string, PostView>()
+  #storedProfiles = new Map<string, ProfileViewDetailed>()
 
   public readonly agent: BskyAgent
 
@@ -32,6 +37,10 @@ export class AtkitBsky {
 
   get storedPostViews() {
     return this.#storedPostViews
+  }
+
+  get storedProfiles() {
+    return this.#storedProfiles
   }
 
   constructor(opts: AtpAgentOpts) {
@@ -101,6 +110,34 @@ export class AtkitBsky {
   }
 
   /**
+   * get timeline.
+   */
+  async getTimeline(
+    params: AppBskyFeedGetTimeline.QueryParams,
+    opts?: AppBskyFeedGetTimeline.CallOptions
+  ) {
+    const { data } = await this.agent.getTimeline(params, opts)
+
+    this.#mergePostsByFeed(data.feed)
+
+    return data
+  }
+
+  /**
+   * get profile.
+   */
+  async getProfile(
+    params: AppBskyActorGetProfile.QueryParams,
+    opts?: AppBskyActorGetProfile.CallOptions
+  ) {
+    const { data } = await this.agent.getProfile(params, opts)
+
+    this.#mergeProfiles([data])
+
+    return data
+  }
+
+  /**
    * subscribe to auth state changes.
    *
    * @param callback callback function.
@@ -120,6 +157,18 @@ export class AtkitBsky {
     return this.#eventPostsChanged.subscribe(callback)
   }
 
+  /**
+   * subscribe to profiles changes.
+   *
+   * @param callback callback function.
+   * @returns unsubscribe function.
+   */
+  onProfilesChanged(
+    callback: (profiles: Map<string, ProfileViewDetailed>) => void
+  ) {
+    return this.#eventProfilesChanged.subscribe(callback)
+  }
+
   #changeAuthState(state: AuthState) {
     this.#authState = state
     this.#eventAuthStateChanged.dispatch(state)
@@ -127,28 +176,59 @@ export class AtkitBsky {
 
   #mergePostsByFeed(feed: FeedViewPost[]) {
     const merged = new Map<string, PostView>([...this.storedPostViews])
+    const profiles: ProfileViewDetailed[] = []
 
     for (const { post, reply } of feed) {
       merged.set(post.uri, post)
+      profiles.push(post.author)
 
       if (reply) {
         merged.set(reply.root.uri, reply.root)
         merged.set(reply.parent.uri, reply.parent)
+
+        profiles.push(reply.root.author)
+        profiles.push(reply.parent.author)
       }
     }
 
     this.#storedPostViews = merged
     this.#eventPostsChanged.dispatch(merged)
+    this.#mergeProfiles(profiles)
   }
 
   #mergePosts(posts: PostView[]) {
     const merged = new Map<string, PostView>([...this.storedPostViews])
+    const profiles: ProfileViewDetailed[] = []
 
     for (const post of posts) {
       merged.set(post.uri, post)
+      profiles.push(post.author)
     }
 
     this.#storedPostViews = merged
     this.#eventPostsChanged.dispatch(merged)
+    this.#mergeProfiles(profiles)
+  }
+
+  #mergeProfiles(profiles: ProfileViewDetailed[]) {
+    const merged = new Map<string, ProfileViewDetailed>([
+      ...this.#storedProfiles,
+    ])
+
+    for (const profile of profiles) {
+      const oldProfile = merged.get(profile.did)
+
+      if (oldProfile) {
+        merged.set(profile.did, {
+          ...oldProfile,
+          ...profile,
+        })
+      } else {
+        merged.set(profile.did, profile)
+      }
+    }
+
+    this.#storedProfiles = merged
+    this.#eventProfilesChanged.dispatch(merged)
   }
 }

@@ -1,9 +1,9 @@
-# `AtkitBsky#onPostsChanged`
+# `AtkitBsky#onProfilesChanged`
 
 ```ts
-atkit.onPostsChanged((posts) => {
-  // atkit.storedPostViews === posts
-  console.log('posts', posts)
+atkit.onProfilesChanged((profiles) => {
+  // atkit.storedProfiles === profiles
+  console.log('profiles', profiles)
 })
 
 atkit.getPosts({ uris: ['at://did:plc:qhnfzuuv33o7gggw6mmu2ks4/app.bsky.feed.post/3jubbmxmjy32f'] })
@@ -14,18 +14,18 @@ import { useCoreAtkitBsky } from '../../../contexts/CoreAtkitBskyContext'
 import { ExampleContainer } from '../../../components/ExampleContainer'
 import { useEffect, useState } from 'react'
 
-export function OnPostsChangedExample() {
+export function OnProfilesChangedExample() {
   const { atkit, setAtkit } = useCoreAtkitBsky()
-  const [posts, setPosts] = useState(atkit?.storedPostViews ?? new Map())
-  const [uri, setUri] = useState('at://did:plc:qhnfzuuv33o7gggw6mmu2ks4/app.bsky.feed.post/3jubbmxmjy32f')
+  const [profiles, setProfiles] = useState(atkit?.storedProfiles ?? new Map())
+  const [actor, setActor] = useState('ucho-ten.net')
 
   useEffect(() => {
     if (!atkit) {
       return
     }
 
-    const unsubscribe = atkit.onPostsChanged((posts) => {
-      setPosts(posts)
+    const unsubscribe = atkit.onProfilesChanged((profiles) => {
+      setProfiles(profiles)
     })
 
     return () => unsubscribe()
@@ -35,45 +35,35 @@ export function OnPostsChangedExample() {
     <div style={{ width: '100%' }}>
       <pre style={{ height: 200, overflow: 'auto', resize: 'vertical' }}>
         <code>
-          stored posts: {posts.size}
+          stored posts: {profiles.size}
           <br />
-          keys: {JSON.stringify([...posts.keys()], null, 2)}
+          keys: {JSON.stringify([...profiles.keys()], null, 2)}
           <br />
-          map: {JSON.stringify([...posts], null, 2)}
+          map: {JSON.stringify([...profiles], null, 2)}
         </code>
       </pre>
 
       <div className="nx-mb-4 nx-flex nx-gap-2" style={{ alignItems: 'center' }}>
         <label
           className="nx-block nx-text-lg nx-font-bold nx-mb-2"
-          htmlFor="post-uri"
+          htmlFor="actor"
         >
-          Post URI
+          Handle
         </label>
         <input
-          placeholder="Post URI"
+          placeholder="Handle"
           className="nx-border nx-appearance-none nx-rounded nx-py-2 nx-px-3"
-          name="post-uri"
-          id="post-uri"
-          value={uri}
-          onChange={(e) => setUri(e.target.value)}
+          name="actor"
+          id="actor"
+          value={actor}
+          onChange={(e) => setActor(e.target.value)}
         />
         <button
           className="nx-bg-white nx-border nx-appearance-none nx-rounded nx-py-2 nx-px-3"
           style={{ color: '#202020' }}
-          onClick={() => atkit.getPosts({ uris: [uri] })}
+          onClick={() => atkit.getProfile({ actor })}
         >
-          Get post
-        </button>
-      </div>
-
-      <div>
-        <button
-          className="nx-bg-white nx-border nx-appearance-none nx-rounded nx-py-2 nx-px-3"
-          style={{ color: '#202020' }}
-          onClick={() => atkit.getTimeline()}
-        >
-          Get timeline
+          Get profile
         </button>
       </div>
     </div>
@@ -81,5 +71,5 @@ export function OnPostsChangedExample() {
 }
 
 <ExampleContainer loginRequired>
-  <OnPostsChangedExample />
+  <OnProfilesChangedExample />
 </ExampleContainer>
