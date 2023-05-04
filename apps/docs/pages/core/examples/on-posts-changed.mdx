@@ -18,6 +18,7 @@ export function OnPostsChangedExample() {
   const { atkit, setAtkit } = useCoreAtkitBsky()
   const [posts, setPosts] = useState(atkit?.storedPostViews ?? new Map())
   const [uri, setUri] = useState('at://did:plc:qhnfzuuv33o7gggw6mmu2ks4/app.bsky.feed.post/3jubbmxmjy32f')
+  const [actor, setActor] = useState('hota1024.com')
 
   useEffect(() => {
     if (!atkit) {
@@ -64,6 +65,30 @@ export function OnPostsChangedExample() {
           onClick={() => atkit.getPosts({ uris: [uri] })}
         >
           Get post
+        </button>
+      </div>
+
+      <div className="nx-mb-4 nx-flex nx-gap-2" style={{ alignItems: 'center' }}>
+        <label
+          className="nx-block nx-text-lg nx-font-bold nx-mb-2"
+          htmlFor="actor"
+        >
+          Actor
+        </label>
+        <input
+          placeholder="Handle"
+          className="nx-border nx-appearance-none nx-rounded nx-py-2 nx-px-3"
+          name="actor"
+          id="actor"
+          value={actor}
+          onChange={(e) => setActor(e.target.value)}
+        />
+        <button
+          className="nx-bg-white nx-border nx-appearance-none nx-rounded nx-py-2 nx-px-3"
+          style={{ color: '#202020' }}
+          onClick={() => atkit.getAuthorFeed({ actor })}
+        >
+          Get feed
         </button>
       </div>
 

@@ -1,5 +1,8 @@
 import {
   AppBskyActorGetProfile,
+  AppBskyFeedDefs,
+  AppBskyFeedGetAuthorFeed,
+  AppBskyFeedGetPostThread,
   AppBskyFeedGetPosts,
   AppBskyFeedGetTimeline,
   AtpAgentLoginOpts,
@@ -119,6 +122,36 @@ export class AtkitBsky {
     const { data } = await this.agent.getTimeline(params, opts)
 
     this.#mergePostsByFeed(data.feed)
+
+    return data
+  }
+
+  /**
+   * get author feed.
+   */
+  async getAuthorFeed(
+    params: AppBskyFeedGetAuthorFeed.QueryParams,
+    opts?: AppBskyFeedGetAuthorFeed.CallOptions
+  ) {
+    const { data } = await this.agent.getAuthorFeed(params, opts)
+
+    this.#mergePostsByFeed(data.feed)
+
+    return data
+  }
+
+  /**
+   * get post thread.
+   */
+  async getPostThread(
+    params: AppBskyFeedGetPostThread.QueryParams,
+    opts?: AppBskyFeedGetPostThread.CallOptions
+  ) {
+    const { data } = await this.agent.getPostThread(params, opts)
+
+    if (AppBskyFeedDefs.isThreadViewPost(data.thread)) {
+      this.#mergePostsByFeed([data.thread])
+    }
 
     return data
   }
