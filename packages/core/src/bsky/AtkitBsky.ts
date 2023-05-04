@@ -5,6 +5,7 @@ import {
   AppBskyFeedGetLikes,
   AppBskyFeedGetPostThread,
   AppBskyFeedGetPosts,
+  AppBskyFeedGetRepostedBy,
   AppBskyFeedGetTimeline,
   AtpAgentLoginOpts,
   AtpAgentOpts,
@@ -169,6 +170,20 @@ export class AtkitBsky {
     const profiles = data.likes.map((like) => like.actor)
 
     this.#mergeProfiles(profiles)
+
+    return data
+  }
+
+  /**
+   * get reposted by.
+   */
+  async getRepostedBy(
+    params: AppBskyFeedGetRepostedBy.QueryParams,
+    opts?: AppBskyFeedGetRepostedBy.CallOptions
+  ) {
+    const { data } = await this.agent.getRepostedBy(params, opts)
+
+    this.#mergeProfiles(data.repostedBy)
 
     return data
   }
