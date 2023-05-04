@@ -1,0 +1,76 @@
+# `AtkitBsky#onPostsChanged`
+
+```ts
+atkit.onPostsChanged((posts) => {
+  // atkit.storedPostViews === posts
+  console.log('posts', posts)
+})
+
+atkit.getPosts({ uris: ['at://did:plc:qhnfzuuv33o7gggw6mmu2ks4/app.bsky.feed.post/3jubbmxmjy32f'] })
+```
+
+import { AtkitBsky } from '@atkit/core'
+import { useCoreAtkitBsky } from '../../../contexts/CoreAtkitBskyContext'
+import { ExampleContainer } from '../../../components/ExampleContainer'
+import { useEffect, useState } from 'react'
+
+export function OnPostsChangedExample() {
+  const { atkit, setAtkit } = useCoreAtkitBsky()
+  const [posts, setPosts] = useState(atkit?.storedPostViews ?? new Map())
+  const [uri, setUri] = useState('at://did:plc:qhnfzuuv33o7gggw6mmu2ks4/app.bsky.feed.post/3jubbmxmjy32f')
+
+  useEffect(() => {
+    if (!atkit) {
+      return
+    }
+
+    const unsubscribe = atkit.onPostsChanged((posts) => {
+      setPosts(posts)
+    })
+
+    return () => unsubscribe()
+  }, [atkit])
+
+  return (
+    <div style={{ width: '100%' }}>
+      <pre style={{ maxHeight: 200, overflow: 'auto' }}>
+        <code>
+          stored posts: {posts.size}
+          <br />
+          keys: {JSON.stringify([...posts.keys()], null, 2)}
+          <br />
+          map: {JSON.stringify([...posts], null, 2)}
+        </code>
+      </pre>
+
+      <div className="nx-mb-4">
+        <label
+          className="nx-block nx-text-lg nx-font-bold nx-mb-2"
+          htmlFor="post-uri"
+        >
+          Post URI
+        </label>
+        <input
+          placeholder="Post URI"
+          className="nx-w-full nx-border nx-appearance-none nx-rounded nx-py-2 nx-px-3"
+          name="post-uri"
+          id="post-uri"
+          value={uri}
+          onChange={(e) => setUri(e.target.value)}
+        />
+      </div>
+
+      <button
+        className="nx-bg-white nx-border nx-appearance-none nx-rounded nx-py-2 nx-px-3"
+        style={{ color: '#202020' }}
+        onClick={() => atkit.getPosts({ uris: [uri] })}
+      >
+        Get post
+      </button>
+    </div>
+  )
+}
+
+<ExampleContainer loginRequired>
+  <OnPostsChangedExample />
+</ExampleContainer>

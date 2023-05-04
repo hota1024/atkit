@@ -9,7 +9,7 @@ const CoreAtkitBskyContext = createContext<{
   setAtkit() {},
 })
 
-export const useCoreAtkitBsky = (): AtkitBsky => {
+export const useCoreAtkitBsky = () => {
   return useContext(CoreAtkitBskyContext)
 }
 
