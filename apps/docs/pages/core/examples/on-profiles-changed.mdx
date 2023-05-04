@@ -66,6 +66,20 @@ export function OnProfilesChangedExample() {
         >
           Get profile
         </button>
+        <button
+          className="nx-bg-white nx-border nx-appearance-none nx-rounded nx-py-2 nx-px-3"
+          style={{ color: '#202020' }}
+          onClick={() => atkit.getFollows({ actor })}
+        >
+          Get follows
+        </button>
+        <button
+          className="nx-bg-white nx-border nx-appearance-none nx-rounded nx-py-2 nx-px-3"
+          style={{ color: '#202020' }}
+          onClick={() => atkit.getFollowers({ actor })}
+        >
+          Get followers
+        </button>
       </div>
 
       <div className="nx-mb-4 nx-flex nx-gap-2" style={{ alignItems: 'center' }}>

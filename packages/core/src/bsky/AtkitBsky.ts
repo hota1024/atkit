@@ -7,6 +7,8 @@ import {
   AppBskyFeedGetPosts,
   AppBskyFeedGetRepostedBy,
   AppBskyFeedGetTimeline,
+  AppBskyGraphGetFollowers,
+  AppBskyGraphGetFollows,
   AtpAgentLoginOpts,
   AtpAgentOpts,
   AtpSessionData,
@@ -198,6 +200,34 @@ export class AtkitBsky {
     const { data } = await this.agent.getProfile(params, opts)
 
     this.#mergeProfiles([data])
+
+    return data
+  }
+
+  /**
+   * get follows.
+   */
+  async getFollows(
+    params: AppBskyGraphGetFollows.QueryParams,
+    opts?: AppBskyGraphGetFollows.CallOptions
+  ) {
+    const { data } = await this.agent.getFollows(params, opts)
+
+    this.#mergeProfiles(data.follows)
+
+    return data
+  }
+
+  /**
+   * get followers.
+   */
+  async getFollowers(
+    params: AppBskyGraphGetFollowers.QueryParams,
+    opts?: AppBskyGraphGetFollowers.CallOptions
+  ) {
+    const { data } = await this.agent.getFollowers(params, opts)
+
+    this.#mergeProfiles(data.followers)
 
     return data
   }
