@@ -1,0 +1,49 @@
+---
+title: Get Started
+---
+
+import { Tab, Tabs } from 'nextra-theme-docs'
+
+# @atkit/core
+
+`@atkit/core` is a core package for `@atkit` packages.
+
+## Features
+
+- 📝 Manage client states
+- 🔥 Emit client state changes events
+- 🚨 AtProtocol error wrappers
+
+## Installation
+ 
+<Tabs items={['pnpm', 'npm', 'yarn']}>
+  <Tab>
+    ```bash
+    pnpm i @atkit/core
+    ```
+  </Tab>
+  <Tab>
+    ```bash
+    npm i @atkit/core
+    ```
+  </Tab>
+  <Tab>
+    ```bash
+    yarn add @atkit/core
+    ```
+  </Tab>
+</Tabs>
+
+## Usage
+
+```ts
+import { AtkitBsky } from '@atkit/core'
+
+const atkit = new AtkitBsky({
+  service: '',
+})
+
+atkit.onAuthStateChanged((state) => {})
+
+atkit.login('identifier', 'password')
+```

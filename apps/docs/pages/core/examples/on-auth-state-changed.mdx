@@ -1,0 +1,53 @@
+# `AtkitBsky#onAuthStateChanged`
+
+import { AtkitBsky } from '@atkit/core'
+import { LoginForm } from '../../../components/LoginForm'
+import { useCoreAtkitBsky } from '../../../contexts/CoreAtkitBskyContext'
+
+export function LoginExample() {
+  const { atkit, setAtkit } = useCoreAtkitBsky()
+
+  const handleSubmit = async ({ serviceURL, identifier, password }) => {
+    const atkit = new AtkitBsky({ service: serviceURL })
+
+    atkit.onAuthStateChanged((state) => {
+      alert(`Auth state changed: ${state}`)
+    })
+
+    await atkit.login({
+      identifier,
+      password,
+    })
+
+    setAtkit(atkit)
+  }
+
+  return (
+    <div className="nx-flex nx-justify-center nx-border nx-rounded" style={{ borderColor: 'rgba(128, 128, 128, 0.2)', padding: '2rem 1rem' }}>
+      <LoginForm onSubmit={handleSubmit} />
+    </div>
+  )
+}
+
+```ts
+import { AtkitBsky } from '@atkit/core'
+
+const atkit = new AtkitBsky({ service })
+
+atkit.onAuthStateChanged((state) => {
+  // state is one of
+  // - 'logging-in'
+  // - 'logging-out'
+  // - 'logged-in'
+  // - 'logged-out'
+
+  alert(`Auth state changed: ${state}`)
+})
+
+atkit.login({
+  identifier,
+  password,
+})
+```
+
+<LoginExample />
