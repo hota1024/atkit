@@ -2,6 +2,7 @@ import {
   AppBskyActorGetProfile,
   AppBskyFeedDefs,
   AppBskyFeedGetAuthorFeed,
+  AppBskyFeedGetLikes,
   AppBskyFeedGetPostThread,
   AppBskyFeedGetPosts,
   AppBskyFeedGetTimeline,
@@ -152,6 +153,22 @@ export class AtkitBsky {
     if (AppBskyFeedDefs.isThreadViewPost(data.thread)) {
       this.#mergePostsByFeed([data.thread])
     }
+
+    return data
+  }
+
+  /**
+   * get likes.
+   */
+  async getLikes(
+    params: AppBskyFeedGetLikes.QueryParams,
+    opts?: AppBskyFeedGetLikes.CallOptions
+  ) {
+    const { data } = await this.agent.getLikes(params, opts)
+
+    const profiles = data.likes.map((like) => like.actor)
+
+    this.#mergeProfiles(profiles)
 
     return data
   }

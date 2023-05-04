@@ -18,6 +18,7 @@ export function OnProfilesChangedExample() {
   const { atkit, setAtkit } = useCoreAtkitBsky()
   const [profiles, setProfiles] = useState(atkit?.storedProfiles ?? new Map())
   const [actor, setActor] = useState('ucho-ten.net')
+  const [uri, setUri] = useState('at://did:plc:qhnfzuuv33o7gggw6mmu2ks4/app.bsky.feed.post/3jubbmxmjy32f')
 
   useEffect(() => {
     if (!atkit) {
@@ -64,6 +65,30 @@ export function OnProfilesChangedExample() {
           onClick={() => atkit.getProfile({ actor })}
         >
           Get profile
+        </button>
+      </div>
+
+      <div className="nx-mb-4 nx-flex nx-gap-2" style={{ alignItems: 'center' }}>
+        <label
+          className="nx-block nx-text-lg nx-font-bold nx-mb-2"
+          htmlFor="uri"
+        >
+          Post URI
+        </label>
+        <input
+          placeholder="URI"
+          className="nx-border nx-appearance-none nx-rounded nx-py-2 nx-px-3"
+          name="uri"
+          id="uri"
+          value={uri}
+          onChange={(e) => setActor(e.target.value)}
+        />
+        <button
+          className="nx-bg-white nx-border nx-appearance-none nx-rounded nx-py-2 nx-px-3"
+          style={{ color: '#202020' }}
+          onClick={() => atkit.getLikes({ uri })}
+        >
+          Get profiles that liked
         </button>
       </div>
     </div>
