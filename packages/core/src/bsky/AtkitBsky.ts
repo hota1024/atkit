@@ -42,16 +42,36 @@ export class AtkitBsky {
     return this.#authState
   }
 
+  /**
+   * stored post views.
+   */
   get storedPostViews() {
     return this.#storedPostViews
   }
 
+  /**
+   * stored profiles.
+   */
   get storedProfiles() {
     return this.#storedProfiles
   }
 
-  constructor(opts: AtpAgentOpts) {
-    this.agent = new BskyAgent(opts)
+  /**
+   * @param opts agent options.
+   */
+  constructor(opts: AtpAgentOpts)
+
+  /**
+   * @param agent BskyAgent instance.
+   */
+  constructor(agent: BskyAgent)
+
+  constructor(optsOrAgent: AtpAgentOpts | BskyAgent) {
+    if (optsOrAgent instanceof BskyAgent) {
+      this.agent = optsOrAgent
+    } else {
+      this.agent = new BskyAgent(optsOrAgent)
+    }
   }
 
   /**
