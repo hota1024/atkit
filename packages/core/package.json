@@ -26,6 +26,6 @@
     "access": "public"
   },
   "dependencies": {
-    "@atproto/api": "^0.2.11"
+    "@atproto/api": "^0.3.3"
   }
 }

@@ -47,8 +47,8 @@ importers:
   packages/core:
     dependencies:
       '@atproto/api':
-        specifier: ^0.2.11
-        version: 0.2.11
+        specifier: ^0.3.3
+        version: 0.3.3
     devDependencies:
       '@atkit/tsconfig':
         specifier: workspace:*
@@ -121,8 +121,8 @@ importers:
 
 packages:
 
-  /@atproto/api@0.2.11:
-    resolution: {integrity: sha512-5JY1Ii/81Bcy1ZTGRqALsaOdc8fIJTSlMNoSptpGH73uAPQE93weDrb8sc3KoxWi1G2ss3IIBSLPJWxALocJSQ==}
+  /@atproto/api@0.3.3:
+    resolution: {integrity: sha512-BlgpYbdPO0KSBypg2KgqHM0kS2Pk82P3X0w2rJs/vrdcMl72d2WeI9kQ5PPFiz80p6C6XcLcpnzzKKtQeFvh4A==}
     dependencies:
       '@atproto/common-web': 0.1.0
       '@atproto/uri': 0.0.2
